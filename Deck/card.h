@@ -75,7 +75,15 @@ public:
 		else
 			hidden = true;
 	}
-
+	int giveValue() {
+		if (Value > 9) {
+			return 10;
+		}
+		else
+		{
+			return Value;
+		}
+	}
 	void ShowCard() {
 		if (hidden == false) {
 			if (face) {

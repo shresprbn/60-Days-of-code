@@ -1,8 +1,7 @@
 #pragma once
 #include <iostream>
 #include "card.h"
-#include <ctime>
-#include <cstdlib>
+#include <random>
 using namespace std;
 
 class Deck {
@@ -32,18 +31,9 @@ private:
     Track* head2,*tail2;
     int size2;
     int size;
+    int t = 0;
 
-    void insertBeg(Card c1) {
-        Node* node = new Node(c1);
-        node->next = head;
-        head = node;
-
-        // if list is empty
-        if (tail == NULL) {
-            tail = head;
-        }
-        size++;
-    }
+    
     void insertBeg(int c1) {
         Track* node = new Track(c1);
         node->next = head2;
@@ -55,6 +45,24 @@ private:
         }
         size++;
     }
+   
+public:
+    Deck() {
+        size = 0;
+        head = tail = NULL;
+        initializeDeck();
+    }
+    void insertBeg(Card c1) {
+        Node* node = new Node(c1);
+        node->next = head;
+        head = node;
+
+        // if list is empty
+        if (tail == NULL) {
+            tail = head;
+        }
+        size++;
+    }
     void initializeDeck() {
         for (int i = 1; i < 5; i++) {
             for (int j = 1; j < 14; j++) {
@@ -62,12 +70,6 @@ private:
                 insertBeg(c1);
             }
         }
-    }
-public:
-    Deck() {
-        size = 0;
-        head = tail = NULL;
-        initializeDeck();
     }
     Card takeTop() {
         if (!head) {
@@ -92,15 +94,17 @@ public:
             size--;
         } while (head != NULL);
     }
+
     void suffleDeck() {
         emptyDeck();
         int temp;
         int size = 0;
-        for (size = 1; size <= 52; size++) {
+        while (size < 52) {
             bool isThere = false;
-            srand(time(NULL));
-            temp = rand() % 52 + 1;
-            cout << temp << "\n";
+            random_device rd;       //random number gen that is fast
+            mt19937 gen(rd());
+            temp = gen() % 52 + 1;
+            //   cout << temp << "\n";
             Track* tempTrack = head2;
             if (tempTrack == NULL) {
                 isThere = false;
@@ -109,17 +113,42 @@ public:
                 while (tempTrack != NULL) {
                     if (tempTrack->value == temp) {
                         isThere = true;
-                }
+                    }
                     tempTrack = tempTrack->next;
                 }
             }
-            if (isThere == false ) {
+            if (isThere == false) {
                 insertBeg(temp);
+                t++;
+                //cout << t;
                 Card card(temp % 4 + 1, temp % 13 + 1);
                 insertBeg(card);
+                size++;
             }
         }
     }
-
-
+    
+    int getTotal() {
+        int sum = 0;
+        Node* temp = head;
+        while (temp!=NULL)
+        {
+            sum += temp->top.giveValue();
+            temp = temp->next;
+        }
+      
+        return sum;
+   }
+    void showDeck() {
+        Node* temp = head;
+        Card tempCard;
+        while (temp!=NULL)
+        {
+            tempCard = temp->top;
+            tempCard.turnCard();
+            tempCard.ShowCard();
+            cout << "\n";
+            temp = temp->next;
+        }
+    }
 };
